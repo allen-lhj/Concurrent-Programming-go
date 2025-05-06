@@ -22,3 +22,7 @@ The main advantage of user-level threads is performance. Context-switching a sue
 “Go 使用的 goroutines 的系统有时被称为 M:N 线程模型。这是指有 M 个用户级线程（goroutines）映射到 N 个内核级线程。这与通常的用户级线程形成对比，通常称为 N:1 线程模型，意味着 N 个用户级线程对应 1 个内核级线程。实现 M:N 模型的运行时比其他模型复杂得多，因为它需要许多技术来在内核级线程集上移动和平衡用户级线程。”
 
 “Go 的运行时根据逻辑处理器的数量确定要使用多少个内核级线程。这个值在名为 GOMAXPROCS 的环境变量中设置。如果这个变量没有设置，Go 将通过查询操作系统来确定您的系统有多少个 CPU。您可以通过执行以下代码来检查 Go 看到的处理器数量和 GOMAXPROCS 的值。”
+
+NOTE Concurrency is about planning how to do many tasks at the same time. Parallelism is about performing many tasks at the same time.
+
+并发是关于如何同时执行多个任务的计划。并行是关于同时执行多个任务。
