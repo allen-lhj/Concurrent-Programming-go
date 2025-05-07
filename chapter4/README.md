@@ -35,3 +35,6 @@ But this might needlessing restrict performance and scalability for some applica
 Readers-writer mutextes give us a variation on standard mutexes that only block concurrency when we need to update a shared resource. Using readers-writer mutexes, we can improve the performance of read-heavy applications where we are doing a large number of read operations on shared data in comparsion with updates
 
 有时，互斥锁可能过于限制性。我们可以把互斥锁看作是通过阻塞并发来解决并发问题的钝工具。一次只有一个 goroutine 能执行我们用互斥锁保护的临界区。这对于保证我们不会遭遇竞态条件非常有效，但对于某些应用来说，这可能不必要地限制了性能和可扩展性。读写互斥锁为我们提供了标准互斥锁的一个变体，仅在需要更新共享资源时阻塞并发。使用读写互斥锁，我们可以提升读操作占多数的应用的性能，这类应用中与更新相比，我们对共享数据执行了大量的读操作。
+
+### Building our own read-preferred readers-writer mutex
+
