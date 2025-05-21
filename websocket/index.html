@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket 简单聊天室</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chatbox {
+            width: 400px;
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: scroll;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #messageInput { width: 330px; padding: 8px; }
+        button { padding: 8px 12px; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket 简单聊天室</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="messageInput" placeholder="输入消息...">
+    <button onclick="sendMessage()">发送</button>
+
+    <script>
+        // 连接到服务器的 WebSocket 地址
+        // 'ws://' 表示普通的 WebSocket 连接（如果是 'wss://' 则表示安全的 WebSocket 连接）
+        // 'localhost:8080/ws' 对应我们 Go 服务器监听的地址和路径
+        const socket = new WebSocket('ws://localhost:8080/ws');
+        const chatbox = document.getElementById('chatbox');
+        const messageInput = document.getElementById('messageInput');
+
+        // 1. 当连接成功建立时触发
+        socket.onopen = function(event) {
+            console.log('WebSocket 连接已打开:', event);
+            displayMessage('系统：已成功连接到 WebSocket 服务器！');
+        };
+
+        // 2. 当从服务器接收到消息时触发
+        socket.onmessage = function(event) {
+            console.log('收到服务器消息:', event.data);
+            displayMessage('服务器： ' + event.data);
+        };
+
+        // 3. 当连接关闭时触发
+        socket.onclose = function(event) {
+            console.log('WebSocket 连接已关闭:', event);
+            if (event.wasClean) {
+                displayMessage(`系统：连接已关闭，代码=${event.code} 原因=${event.reason}`);
+            } else {
+                // 例如服务器进程被杀死或网络断开
+                displayMessage('系统：连接意外断开');
+            }
+        };
+
+        // 4. 当连接发生错误时触发
+        socket.onerror = function(error) {
+            console.error('WebSocket 错误:', error);
+            displayMessage('系统：发生错误 - ' + error.message);
+        };
+
+        // 函数：发送消息到服务器
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message.trim() === '') return; // 不发送空消息
+
+            socket.send(message); // 通过 WebSocket 发送消息
+            displayMessage('你： ' + message); // 同时在自己的聊天框显示
+            messageInput.value = ''; // 清空输入框
+        }
+
+        // 函数：在聊天框显示消息
+        function displayMessage(message) {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight; // 自动滚动到底部
+        }
+
+        // 监听回车键发送消息
+        messageInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
